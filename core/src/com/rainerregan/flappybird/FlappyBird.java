@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
+import java.util.Random;
+
 public class FlappyBird extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture background; // Seperti image | Background untuk game
@@ -18,6 +20,14 @@ public class FlappyBird extends ApplicationAdapter {
 
 	int gameState = 0;
 
+	Texture topTube;
+	Texture bottomTube;
+	float gap = 400;
+
+	float maxTubeOffset;
+	Random rand;
+	float tubeOffset;
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch(); // Managing Sprites
@@ -27,18 +37,33 @@ public class FlappyBird extends ApplicationAdapter {
 		birds[1] = new Texture("bird2.png");
 
 		birdY = Gdx.graphics.getHeight()/2 - birds[0].getHeight()/2;
+
+		topTube = new Texture("toptube.png");
+		bottomTube = new Texture("bottomtube.png");
+
+		maxTubeOffset = Gdx.graphics.getHeight()/2- gap/2 -100;
+
+		rand = new Random();
 	}
 
 	@Override
 	public void render () {
 
+		batch.begin(); // Begin Batch: Memberi tahu render untuk memulai
+		batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
 		// Ketika game sudah dimulai
 		if(gameState != 0) {
-
 			// Jika disentuh, maka burung akan terbang karena velocitynya minus, dan akan terbang keatas
 			if(Gdx.input.justTouched()){
 				velocity = -30;
+
+				tubeOffset = (rand.nextFloat() - 0.5f) * (Gdx.graphics.getHeight() - gap - 200);
 			}
+
+			batch.draw(topTube, Gdx.graphics.getWidth() /2 -topTube.getWidth()/2, Gdx.graphics.getHeight()/2 + gap/2 + tubeOffset);
+			batch.draw(bottomTube, Gdx.graphics.getWidth()/2 - bottomTube.getWidth()/2, Gdx.graphics.getHeight()/2 -gap/2 - bottomTube.getHeight() + tubeOffset);
+
 
 			if(birdY > 0 || velocity < 0) {
 				// Kalau sudah tidak disentuh, burung akan jatuh kebawah sesuai dengan gravitasi
@@ -60,8 +85,6 @@ public class FlappyBird extends ApplicationAdapter {
 			flapState = 0;
 		}
 
-		batch.begin(); // Begin Batch: Memberi tahu render untuk memulai
-		batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		batch.draw(birds[flapState], Gdx.graphics.getWidth() / 2 - birds[flapState].getWidth() / 2, birdY);
 		batch.end(); // End render
 	}
