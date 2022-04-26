@@ -37,13 +37,14 @@ public class FlappyBird extends ApplicationAdapter {
 
 			// Jika disentuh, maka burung akan terbang karena velocitynya minus, dan akan terbang keatas
 			if(Gdx.input.justTouched()){
-				velocity = -20;
+				velocity = -30;
 			}
 
-			// Kalau sudah tidak disentuh, burung akan jatuh kebawah sesuai dengan gravitasi
-			velocity = velocity + gravity;
-			birdY -= velocity;
-
+			if(birdY > 0 || velocity < 0) {
+				// Kalau sudah tidak disentuh, burung akan jatuh kebawah sesuai dengan gravitasi
+				velocity = velocity + gravity;
+				birdY -= velocity;
+			}
 		} else {
 
 			// Jika disentuh, permainan akan mulai
